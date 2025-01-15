@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: fullstack-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./backend/.env.sample
+    ports:
+      - "5173:5173"
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - redis
+
+  mongodb:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./backend/data:/data
+
+  redis:
+    container_name: redis-service
+    restart: unless-stopped
+    image: redis:7.0.5-alpine 
+    expose:
+        - 6379
+    depends_on:
+      - mongodb
+
+volumes:
+  data:
